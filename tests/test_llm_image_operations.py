@@ -3,7 +3,7 @@ import os
 import pytest
 from PIL import Image
 
-from utility_functions.llm.llm_image_operation import revise_image_for_llm, batch_revise_images_for_llm, \
+from utility_lib.llm.llm_image_operation import revise_image_for_llm, batch_revise_images_for_llm, \
     process_last_n_images
 
 

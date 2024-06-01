@@ -3,7 +3,7 @@ import math
 import time
 import ujson
 
-from utility_functions.common.json_operations import (
+from utility_lib.common.json_operations import (
     get_json_key,
     load_json,
     save_json,

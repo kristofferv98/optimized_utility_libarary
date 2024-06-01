@@ -1,5 +1,5 @@
 
-from utility_functions.common.directory_operations import setup_directories, list_files, ensure_dir
+from utility_lib.common.directory_operations import setup_directories, list_files, ensure_dir
 
 
 def test_ensure_dir(tmp_path):

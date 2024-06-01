@@ -4,7 +4,7 @@ import shutil
 import tempfile
 import pytest
 
-from utility_functions.common.directory_operations import has_directory_changed, get_latest_files
+from utility_lib.common.directory_operations import has_directory_changed, get_latest_files
 
 
 @pytest.fixture

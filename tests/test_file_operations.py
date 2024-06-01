@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from utility_functions.common.file_operations import (
+from utility_lib.common.file_operations import (
     read_file, write_file, append_to_csv,
     delete_file, clear_file, copy_file,
     move_file, file_properties, get_file_size,

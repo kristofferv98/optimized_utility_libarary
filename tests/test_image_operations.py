@@ -1,5 +1,5 @@
 from PIL import Image
-from utility_functions.common.image_operations import resize_image
+from utility_lib.common.image_operations import resize_image
 
 
 def create_test_image(file_path, size=(100, 100), color=(255, 0, 0)):
