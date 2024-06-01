@@ -1,41 +1,52 @@
-# Python
+# Byte-compiled / optimized / DLL files
 *.py[cod]
-__pycache__/
 *.so
+__pycache__/
+*.pyo
 
-# Packages
-*.egg
-*.egg-info
-dist/
+# Cython build files
 build/
+dist/
+*.egg-info
 
-# Environment
-.env
-*.env
+# Distribution / packaging
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
 
-# VS Code
-.vscode/
+# Installing environments
+*__pycache__/
+
+# macOS
+.DS_Store
 
 # PyCharm
 .idea/
 
-# Jupyter Notebooks
-.ipynb_checkpoints
+# Visual Studio Code
+.vscode/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# pytest
+.cache
+*.pytest_cache/
+
+# Coverage reports
+htmlcov/
+.coverage
 
 # Logs
 *.log
 
-# Coverage
-.coverage
-htmlcov/
-
-# Test
-*.pytest_cache/
-.cache
-
-# MacOS
-.DS_Store
-
-# Other
-*.bak
-*.swp
+# Ignore test binaries
+tests/test_directory_monitor.py
+tests/test_directory_operations.py
+tests/test_file_operations.py
+tests/test_image_operations.py
+tests/test_json_operations.py
+tests/test_llm_image_operations.py
