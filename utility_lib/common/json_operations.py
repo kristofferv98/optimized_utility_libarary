@@ -1,5 +1,4 @@
 import logging
-from pathlib import Path
 import ujson
 
 # Configure logging
@@ -7,6 +6,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 # Global cache dictionary
 json_cache = {}
+
 
 def load_json(json_path):
     """
@@ -37,6 +37,7 @@ def load_json(json_path):
         logging.error(f"Failed to load JSON from {json_path}: {str(e)}")
         return None
 
+
 def save_json(json_path, json_data):
     """
     Save JSON data to a file using ujson.
@@ -62,6 +63,7 @@ def save_json(json_path, json_data):
         logging.error(f"Failed to save JSON to {json_path}: {str(e)}")
         return False
 
+
 def get_json_key(json_data, key, default=None):
     """
     Get a value from a JSON object by key, with an optional default value.
@@ -79,6 +81,7 @@ def get_json_key(json_data, key, default=None):
     except Exception as e:
         logging.error(f"Failed to get key '{key}' from JSON data: {str(e)}")
         return default
+
 
 def update_json_key(json_data, key, value):
     """
@@ -101,5 +104,6 @@ def update_json_key(json_data, key, value):
     except Exception as e:
         logging.error(f"Failed to update key '{key}' in JSON data: {str(e)}")
         return False
+
 
 __all__ = ["load_json", "save_json", "get_json_key", "update_json_key"]

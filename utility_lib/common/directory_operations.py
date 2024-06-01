@@ -1,12 +1,12 @@
 import os
 import logging
-import json
 from pathlib import Path
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 cache = {}
+
 
 def ensure_dir(directory):
     """
@@ -23,6 +23,7 @@ def ensure_dir(directory):
         logging.info(f"Directory '{directory}' ensured.")
     except Exception as e:
         logging.error(f"Failed to ensure directory {directory}: {str(e)}")
+
 
 def list_files(directory, pattern="*", recursive=False):
     """
@@ -50,6 +51,7 @@ def list_files(directory, pattern="*", recursive=False):
         logging.error(f"Error listing files in {directory}: {str(e)}")
         return []
 
+
 def setup_directories(config):
     """
     Ensure all directories specified in the configuration exist.
@@ -67,6 +69,7 @@ def setup_directories(config):
     except Exception as e:
         logging.error(f"Failed to set up directories: {str(e)}")
 
+
 def capture_directory_state(directory):
     state = {}
     for root, _, files in os.walk(directory):
@@ -75,6 +78,7 @@ def capture_directory_state(directory):
             mtime = os.path.getmtime(file_path)
             state[file_path] = mtime
     return state
+
 
 def has_directory_changed(directory):
     """
@@ -99,6 +103,7 @@ def has_directory_changed(directory):
         return True
 
     return False
+
 
 def get_latest_files(directory, num_files=0, file_ext=None):
     """
@@ -140,5 +145,6 @@ def get_latest_files(directory, num_files=0, file_ext=None):
         files = files[:num_files]
 
     return [file[0] for file in files]
+
 
 __all__ = ['ensure_dir', 'list_files', 'setup_directories', 'has_directory_changed', 'get_latest_files']

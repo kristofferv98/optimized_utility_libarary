@@ -11,6 +11,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 # Global cache dictionary
 file_cache = {}
 
+
 def display_img(filepath):
     """
     Display an image from the given file path using matplotlib.
@@ -52,12 +53,14 @@ def display_img(filepath):
     plt.axis('off')  # Hide axes
     plt.show()
 
+
 def clear_plot():
     """
     Clear the current matplotlib plot.
     """
     plt.clf()
     plt.close()
+
 
 def image_to_base64(filepath):
     """
@@ -91,6 +94,7 @@ def image_to_base64(filepath):
         logging.error(f"Failed to convert image to Base64 at {filepath}: {str(e)}")
     return None
 
+
 def base64_to_image(base64_string, output_filepath):
     """
     Decode a Base64 string back to an image file.
@@ -112,6 +116,7 @@ def base64_to_image(base64_string, output_filepath):
         file_cache[output_filepath] = base64_string
     except Exception as e:
         logging.error(f"Failed to decode Base64 to image: {str(e)}")
+
 
 def resize_image(image_path, size, output_path=None):
     """
@@ -144,5 +149,6 @@ def resize_image(image_path, size, output_path=None):
             file_cache[image_path] = resized_img
     except Exception as e:
         logging.error(f"Failed to resize image at {image_path}: {str(e)}")
+
 
 __all__ = ["display_img", "clear_plot", "image_to_base64", "base64_to_image", "resize_image"]

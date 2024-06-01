@@ -4,7 +4,6 @@ import logging
 import csv
 from concurrent.futures import ThreadPoolExecutor
 from time import ctime
-from pathlib import Path
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

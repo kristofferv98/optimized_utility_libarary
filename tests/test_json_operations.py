@@ -1,6 +1,8 @@
 import json
 import math
 import time
+
+import pytest
 import ujson
 
 from utility_lib.common.json_operations import (
@@ -9,6 +11,12 @@ from utility_lib.common.json_operations import (
     save_json,
     update_json_key,
 )
+@pytest.fixture
+def json_test_file(tmp_path):
+    file_path = tmp_path / "test.json"
+    content = {"key": "value"}
+    file_path.write_text(json.dumps(content))
+    return str(file_path)
 
 def test_load_json(tmp_path):
     file_path = tmp_path / "test.json"
@@ -76,21 +84,20 @@ def test_update_json_key_invalid_key():
     result = update_json_key(json_data, ["list_key"], "value")
     assert result == False
 
-def test_load_json_performance(tmp_path):
-    file_path = tmp_path / "test.json"
-    content = {"key": "value"}
-    file_path.write_text(json.dumps(content))
+
+def test_load_json_performance(json_test_file):
+    iterations = 100000  # Increase iterations to reduce measurement noise
 
     # Measure time without caching
     start_time = time.time()
-    for _ in range(10000):
-        load_json(str(file_path))
+    for _ in range(iterations):
+        load_json(json_test_file)
     no_cache_duration = time.time() - start_time
 
     # Measure time with caching
     start_time = time.time()
-    for _ in range(10000):
-        load_json(str(file_path))
+    for _ in range(iterations):
+        load_json(json_test_file)
     cache_duration = time.time() - start_time
 
     print(f"No cache duration: {no_cache_duration:.4f} seconds")
