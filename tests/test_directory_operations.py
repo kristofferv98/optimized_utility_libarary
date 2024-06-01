@@ -1,5 +1,3 @@
-import os
-import pytest
 
 from utility_functions.common.directory_operations import setup_directories, list_files, ensure_dir
 

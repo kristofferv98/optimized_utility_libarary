@@ -1,0 +1,5 @@
+ujson~=5.10.0
+pillow~=10.3.0
+pytest~=8.2.1
+setuptools~=69.5.1
+matplotlib~=3.9.0

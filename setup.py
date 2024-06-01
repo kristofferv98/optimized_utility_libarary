@@ -6,10 +6,10 @@ setup(
     version='0.1.0',
     packages=find_packages(),
     install_requires=[
-        'Pillow',
+        'pillow',
         'ujson',
         'matplotlib',
-        'opencv-python'
+        'setuptools',
     ],
     extras_require={
         'dev': [
