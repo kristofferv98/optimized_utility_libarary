@@ -2,7 +2,6 @@ import os
 import logging
 import json
 from pathlib import Path
-import glob
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -68,31 +67,40 @@ def setup_directories(config):
     except Exception as e:
         logging.error(f"Failed to set up directories: {str(e)}")
 
-def has_directory_changed(directory, state_file):
-    """
-    Check if the directory has changed by comparing the current state with the previous state stored in a file.
-    """
-    if not os.path.exists(state_file):
-        return True
-
-    with open(state_file, 'r') as file:
-        previous_state = json.load(file)
-
-    current_state = {}
+def capture_directory_state(directory):
+    state = {}
     for root, _, files in os.walk(directory):
         for file in files:
             file_path = os.path.join(root, file)
             mtime = os.path.getmtime(file_path)
-            current_state[file_path] = mtime
+            state[file_path] = mtime
+    return state
 
-    if current_state != previous_state:
-        with open(state_file, 'w') as file:
-            json.dump(current_state, file)
+def has_directory_changed(directory):
+    """
+    Check if the directory has changed by comparing the current state with the previous state stored in the cache.
+
+    Args:
+        directory (str): The path to the directory to check.
+
+    Returns:
+        bool: True if the directory has changed, False otherwise.
+    """
+    global cache
+
+    current_state = capture_directory_state(directory)
+
+    if directory not in cache:
+        cache[directory] = current_state
+        return True
+
+    if current_state != cache[directory]:
+        cache[directory] = current_state
         return True
 
     return False
 
-def get_latest_files(directory, num_files=0, file_ext=None, state_file="directory_state.json"):
+def get_latest_files(directory, num_files=0, file_ext=None):
     """
     Get the latest files in the directory, optionally filtering by file extension and limiting the number of results.
 
@@ -100,7 +108,6 @@ def get_latest_files(directory, num_files=0, file_ext=None, state_file="director
         directory (str): The path to the directory to list files in.
         num_files (int): The number of latest files to return. If 0, return all files. Defaults to 0.
         file_ext (str): The file extension to filter by. If None, no filtering is applied. Defaults to None.
-        state_file (str): The path to the state file to check for directory changes.
 
     Returns:
         list: A list of file paths sorted by modification time, newest first.
@@ -108,15 +115,16 @@ def get_latest_files(directory, num_files=0, file_ext=None, state_file="director
     global cache
 
     # Check if the directory has changed
-    if has_directory_changed(directory, state_file):
+    if has_directory_changed(directory):
         logging.info(f"Directory '{directory}' has changed. Updating cache.")
         files = []
-        for file in os.listdir(directory):
-            file_path = os.path.join(directory, file)
-            if not os.path.isfile(file_path):
-                continue
-            if file_ext is None or file.lower().endswith(file_ext):
-                files.append((file_path, os.path.getmtime(file_path)))
+        for root, _, file_list in os.walk(directory):
+            for file in file_list:
+                file_path = os.path.join(root, file)
+                if not os.path.isfile(file_path):
+                    continue
+                if file_ext is None or file.lower().endswith(file_ext):
+                    files.append((file_path, os.path.getmtime(file_path)))
 
         # Sort the files based on modification time (newest first)
         files.sort(key=lambda x: x[1], reverse=True)

@@ -13,6 +13,7 @@ setup(
         'ujson',
         'matplotlib',
         'setuptools',
+        'opencv-python',
     ],
     extras_require={
         'dev': [

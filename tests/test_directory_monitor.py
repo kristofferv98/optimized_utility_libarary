@@ -1,4 +1,3 @@
-# test_directory_monitor.py
 import os
 import time
 import shutil
@@ -14,32 +13,49 @@ def temp_directory():
     yield directory
     shutil.rmtree(directory)
 
+
 def create_file(directory, filename):
     file_path = os.path.join(directory, filename)
     with open(file_path, 'w') as file:
         file.write("Test file")
     return file_path
 
-def test_has_directory_changed(temp_directory):
-    state_file = os.path.join(temp_directory, "state.json")
 
+def capture_directory_state(directory):
+    state = {}
+    for root, _, files in os.walk(directory):
+        for file in files:
+            file_path = os.path.join(root, file)
+            mtime = os.path.getmtime(file_path)
+            state[file_path] = mtime
+    return state
+
+
+def test_has_directory_changed(temp_directory):
     # Test when state file doesn't exist
-    assert has_directory_changed(temp_directory, state_file)
+    assert has_directory_changed(temp_directory)
+
+    # Capture the initial state and update state file
+    current_state = capture_directory_state(temp_directory)
 
     # Test when no changes in directory
-    assert not has_directory_changed(temp_directory, state_file)
+    assert not has_directory_changed(temp_directory)
 
     # Test when a new file is added
     create_file(temp_directory, "file1.txt")
-    assert has_directory_changed(temp_directory, state_file)
+    assert has_directory_changed(temp_directory)
+
+    # Capture the state again and update state file
+    current_state = capture_directory_state(temp_directory)
 
     # Test when no further changes in directory
-    assert not has_directory_changed(temp_directory, state_file)
+    assert not has_directory_changed(temp_directory)
 
     # Test when an existing file is modified
     time.sleep(1)  # Ensure modification time is different
     create_file(temp_directory, "file1.txt")
-    assert has_directory_changed(temp_directory, state_file)
+    assert has_directory_changed(temp_directory)
+
 
 def test_get_latest_files(temp_directory):
     # Test when directory is empty
