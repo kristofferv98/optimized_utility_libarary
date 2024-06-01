@@ -11,12 +11,14 @@ from utility_lib.common.json_operations import (
     save_json,
     update_json_key,
 )
+
 @pytest.fixture
 def json_test_file(tmp_path):
     file_path = tmp_path / "test.json"
     content = {"key": "value"}
-    file_path.write_text(json.dumps(content))
+    save_json(str(file_path), content)
     return str(file_path)
+
 
 def test_load_json(tmp_path):
     file_path = tmp_path / "test.json"
@@ -93,6 +95,10 @@ def test_load_json_performance(json_test_file):
     for _ in range(iterations):
         load_json(json_test_file)
     no_cache_duration = time.time() - start_time
+
+    # Clear cache to measure time with caching
+    global json_cache
+    json_cache = {}
 
     # Measure time with caching
     start_time = time.time()
