@@ -1,0 +1,41 @@
+# Python
+*.py[cod]
+__pycache__/
+*.so
+
+# Packages
+*.egg
+*.egg-info
+dist/
+build/
+
+# Environment
+.env
+*.env
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+
+# Logs
+*.log
+
+# Coverage
+.coverage
+htmlcov/
+
+# Test
+*.pytest_cache/
+.cache
+
+# MacOS
+.DS_Store
+
+# Other
+*.bak
+*.swp
