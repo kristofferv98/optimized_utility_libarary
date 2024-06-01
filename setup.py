@@ -25,7 +25,7 @@ setup(
     description='An optimized utility library for directory, file, image, and JSON operations.',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/kristofferv98/optimized-utility-library',  # Update with your GitHub repo URL
+    url='https://github.com/kristofferv98/optimized_utility_libarary.git',  # Update with your GitHub repo URL
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
