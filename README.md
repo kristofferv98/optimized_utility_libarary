@@ -227,7 +227,7 @@ Adjust the logging level as needed:
 - `CRITICAL`: Very serious errors that may lead to application failure.
 
 ## Contributing
-Contributions to the Optimized Utility Library are welcome! If you find any bugs, have feature requests, or want to contribute improvements, please open an issue or submit a pull request on the [GitHub repository](https://github.com/your-username/optimized-utility-library).
+Contributions to the Optimized Utility Library are welcome! If you find any bugs, have feature requests, or want to contribute improvements, please open an issue or submit a pull request on the [GitHub repository](https://github.com/kristofferv98/optimized_utility_libarary.git).
 
 When contributing, please adhere to the following guidelines:
 - Follow the existing code style and conventions used in the library.
