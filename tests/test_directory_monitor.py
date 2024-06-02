@@ -3,8 +3,11 @@ import time
 import shutil
 import tempfile
 import pytest
+import ujson as json  # Use ujson for faster JSON operations
 
-from utility_lib.common.directory_operations import has_directory_changed, get_latest_files
+from utility_lib.common.directory_operations import has_directory_changed, get_latest_files, setup_directories, \
+    list_files, ensure_dir, clear_cache, get_state_file_path
+
 
 @pytest.fixture
 def temp_directory():
@@ -31,11 +34,16 @@ def capture_directory_state(directory):
 
 
 def test_has_directory_changed(temp_directory):
-    # Test when state file doesn't exist
-    assert has_directory_changed(temp_directory)
+    clear_cache()
 
-    # Capture the initial state and update state file
+    # Test when state file doesn't exist
+    assert not has_directory_changed(temp_directory)
+
+    # Capture the initial state and create state file
     current_state = capture_directory_state(temp_directory)
+    state_file = get_state_file_path(temp_directory)
+    with state_file.open('w') as file:
+        json.dump(current_state, file)
 
     # Test when no changes in directory
     assert not has_directory_changed(temp_directory)
@@ -46,6 +54,8 @@ def test_has_directory_changed(temp_directory):
 
     # Capture the state again and update state file
     current_state = capture_directory_state(temp_directory)
+    with state_file.open('w') as file:
+        json.dump(current_state, file)
 
     # Test when no further changes in directory
     assert not has_directory_changed(temp_directory)
@@ -57,6 +67,8 @@ def test_has_directory_changed(temp_directory):
 
 
 def test_get_latest_files(temp_directory):
+    clear_cache()
+
     # Test when directory is empty
     assert get_latest_files(temp_directory) == []
 
@@ -84,3 +96,57 @@ def test_get_latest_files(temp_directory):
     # Test getting limited number of files with specific extension
     latest_files = get_latest_files(temp_directory, num_files=2, file_ext=".txt")
     assert latest_files == [file3, file2]
+
+
+def test_ensure_dir(tmp_path):
+    dir_path = tmp_path / "test_dir"
+    ensure_dir(str(dir_path))
+    assert dir_path.exists()
+
+
+def test_list_files(tmp_path):
+    dir_path = tmp_path / "test_dir"
+    file1 = dir_path / "file1.txt"
+    file2 = dir_path / "file2.txt"
+    dir_path.mkdir()
+    file1.touch()
+    file2.touch()
+    files = list_files(str(dir_path))
+    assert len(files) == 2
+    assert file1.absolute().as_posix() in files
+    assert file2.absolute().as_posix() in files
+
+
+def test_list_files_with_pattern(tmp_path):
+    dir_path = tmp_path / "test_dir"
+    file1 = dir_path / "file1.txt"
+    file2 = dir_path / "file2.log"
+    dir_path.mkdir()
+    file1.touch()
+    file2.touch()
+    files = list_files(str(dir_path), "*.txt")
+    assert len(files) == 1
+    assert file1.absolute().as_posix() in files
+
+
+def test_list_files_recursive(tmp_path):
+    dir_path = tmp_path / "test_dir"
+    sub_dir = dir_path / "sub_dir"
+    file1 = dir_path / "file1.txt"
+    file2 = sub_dir / "file2.txt"
+    sub_dir.mkdir(parents=True)
+    file1.touch()
+    file2.touch()
+    files = list_files(str(dir_path), "*.txt", True)
+    assert len(files) == 2
+    assert file1.absolute().as_posix() in files
+    assert file2.absolute().as_posix() in files
+
+
+def test_setup_directories(tmp_path):
+    dir1 = tmp_path / "dir1"
+    dir2 = tmp_path / "dir2"
+    config = {"path1": str(dir1), "path2": str(dir2)}
+    setup_directories(config)
+    assert dir1.exists()
+    assert dir2.exists()

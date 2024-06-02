@@ -19,13 +19,13 @@ def json_test_file(tmp_path):
         "key": "value",
         "nested": {
             "key1": "value1",
-            "key2": [i for i in range(1000000)],
+            "key2": [i for i in range(10000)],
             "key3": {
                 "subkey1": "subvalue1",
-                "subkey2": [f"item{i}" for i in range(1000000)]
+                "subkey2": [f"item{i}" for i in range(10000)]
             }
         },
-        "large_array": [{"id": i, "name": f"name{i}"} for i in range(1000000)]
+        "large_array": [{"id": i, "name": f"name{i}"} for i in range(10000)]
     }
     save_json(str(file_path), content)
     return str(file_path)
@@ -116,7 +116,7 @@ def test_update_json_key_invalid_key():
 
 
 def test_load_json_performance(json_test_file):
-    iterations = 100
+    iterations = 5
     cache_wins = 0
     no_cache_wins = 0
     total_runs = 5

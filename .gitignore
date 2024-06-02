@@ -43,6 +43,8 @@ htmlcov/
 # Logs
 *.log
 
+utility_lib/statefiles/*
+
 # Ignore test binaries
 tests/test_directory_monitor.py
 tests/test_directory_operations.py

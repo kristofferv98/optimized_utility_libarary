@@ -4,6 +4,8 @@ import json
 from PIL import Image
 from concurrent.futures import ThreadPoolExecutor
 
+from utility_lib.common.directory_operations import get_latest_files
+
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -12,78 +14,6 @@ resampling = getattr(Image, 'Resampling', Image).LANCZOS
 
 # Global cache dictionary
 cache = {}
-
-def has_directory_changed(directory, state_file):
-    """
-    Check if the directory has changed by comparing the current state with the previous state stored in a file.
-
-    Args:
-        directory (str): The path to the directory to check.
-        state_file (str): The path to the state file that stores the previous directory state.
-
-    Returns:
-        bool: True if the directory has changed, False otherwise.
-    """
-    if not os.path.exists(state_file):
-        return True
-
-    with open(state_file, 'r') as file:
-        previous_state = json.load(file)
-
-    current_state = {}
-    for root, _, files in os.walk(directory):
-        for file in files:
-            file_path = os.path.join(root, file)
-            mtime = os.path.getmtime(file_path)
-            current_state[file_path] = mtime
-
-    if current_state != previous_state:
-        with open(state_file, 'w') as file:
-            json.dump(current_state, file)
-        return True
-
-    return False
-
-def get_latest_files(directory, num_files=0, file_ext=None, state_file="directory_state.json"):
-    """
-    Get the latest files in the directory, optionally filtering by file extension and limiting the number of results.
-
-    Args:
-        directory (str): The path to the directory to list files in.
-        num_files (int): The number of latest files to return. If 0, return all files. Defaults to 0.
-        file_ext (str): The file extension to filter by. If None, no filtering is applied. Defaults to None.
-        state_file (str): The path to the state file to check for directory changes. Defaults to "directory_state.json".
-
-    Returns:
-        list: A list of file paths sorted by modification time, newest first.
-    """
-    global cache
-
-    # Check if the directory has changed
-    if has_directory_changed(directory, state_file):
-        logging.debug(f"Directory '{directory}' has changed. Updating cache.")
-        files = []
-        for file in os.listdir(directory):
-            file_path = os.path.join(directory, file)
-            if not os.path.isfile(file_path):
-                continue
-            if file_ext is None or file.lower().endswith(file_ext):
-                files.append((file_path, os.path.getmtime(file_path)))
-
-        # Sort the files based on modification time (newest first)
-        files.sort(key=lambda x: x[1], reverse=True)
-
-        # Update the cache
-        cache[directory] = files
-    else:
-        logging.debug(f"Using cached data for directory '{directory}'.")
-        files = cache[directory]
-
-    # Limit the number of files if num_files is specified
-    if num_files > 0:
-        files = files[:num_files]
-
-    return [file[0] for file in files]
 
 def revise_image_for_llm(image_path, mode, output_path=None):
     """
@@ -131,7 +61,7 @@ def revise_image_for_llm(image_path, mode, output_path=None):
         logging.error(f"Failed to revise image at {image_path}: {str(e)}")
         raise e
 
-def batch_revise_images_for_llm(image_paths, mode, output_paths=None, max_workers=10):
+def batch_revise_images_for_llm(image_paths, mode, output_paths=None, max_workers=4):
     """
     Batch process images to resize them based on the specified mode.
 
@@ -157,7 +87,8 @@ def batch_revise_images_for_llm(image_paths, mode, output_paths=None, max_worker
         for future in futures:
             future.result()
 
-def process_last_n_images(folder_path, num_images, output_folder, quality, max_workers=10):
+
+def process_last_n_images(folder_path, num_images, output_folder, quality, max_workers=4):
     """
     Process the last n images in the specified folder, resizing them based on the specified quality.
 
