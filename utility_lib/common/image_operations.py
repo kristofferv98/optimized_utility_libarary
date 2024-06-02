@@ -5,8 +5,13 @@ from matplotlib import pyplot as plt
 import base64
 import cv2
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Configure the logger for the library
+logger = logging.getLogger('utility_lib')
+logger.setLevel(logging.WARNING)
+
+# Add a default NullHandler to prevent "No handler found" warnings
+logger.addHandler(logging.NullHandler())
+
 
 # Global cache dictionary
 file_cache = {}

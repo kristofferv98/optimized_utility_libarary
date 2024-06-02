@@ -2,8 +2,13 @@ import os
 import logging
 from pathlib import Path
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Configure the logger for the library
+logger = logging.getLogger('utility_lib')
+logger.setLevel(logging.WARNING)
+
+# Add a default NullHandler to prevent "No handler found" warnings
+logger.addHandler(logging.NullHandler())
+
 
 cache = {}
 
@@ -40,13 +45,22 @@ def list_files(directory, pattern="*", recursive=False):
     Raises:
         Exception: If there is an error listing the files.
     """
+    global cache
+    cache_key = (directory, pattern, recursive)
+
+    if cache_key in cache:
+        logging.info(f"Using cached file list for directory {directory}")
+        return cache[cache_key]
+
     try:
         path = Path(directory)
         if recursive:
             files = list(path.rglob(pattern))
         else:
             files = list(path.glob(pattern))
-        return [str(f.relative_to(directory)) for f in files]
+        file_list = [str(f.relative_to(directory)) for f in files]
+        cache[cache_key] = file_list
+        return file_list
     except Exception as e:
         logging.error(f"Error listing files in {directory}: {str(e)}")
         return []

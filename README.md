@@ -187,3 +187,30 @@ quality = "high"
 processed_images = process_last_n_images(folder_path, num_images, output_folder, quality)
 print(processed_images)
 ```
+
+
+### Logging Configuration
+
+By default, logging is set to use a WARNING to prevent logging from producing any output unless configured by the user.
+Here’s an example of how to configure logging specific to the library.
+```python
+import logging
+
+# Configure root logger or specific logger
+logging.basicConfig(level=logging.DEBUG)
+
+# or configure the specific logger for your module
+logging.getLogger('utility_lib').setLevel(logging.INFO)
+
+# Now when you use the library, you will see debug logs
+from utility_lib.common.json_operations import load_json, save_json
+
+# Use the functions as usual
+json_path = "path/to/file.json"
+data = {"key": "value"}
+
+save_json(json_path, data)
+loaded_data = load_json(json_path)
+print(loaded_data)
+
+```
